@@ -27,7 +27,7 @@ task :color_scheme => [ :welcome ] do
   i = 0
   schemes.each do |scheme|
     i = i + 1
-    name = File.basename(scheme, ".yml").capitalize
+    name = File.basename(scheme, ".yml").capitalize.gsub('-', '')
     puts "\033[34m#{i} > \033[0m#{name}"
   end
   puts "--------------------------------------------------------------------------"
@@ -51,7 +51,7 @@ task :color_scheme => [ :welcome ] do
   %x[/usr/bin/defaults delete com.googlecode.iterm2 'Custom Color Presets']
   schemes.each do |scheme|
     i = i + 1
-    name = File.basename(scheme, ".yml")
+    name = File.basename(scheme, ".yml").gsub('-', '')
     [ 'dark', 'light' ].each do |dl|
       content = File.read(File.join(ENV['HOME'], '.base16/output/iterm2/base16-' + name + '.' + dl + '.256.itermcolors'))
       content.sub! '<?xml version="1.0" encoding="UTF-8"?>', ''
@@ -72,7 +72,7 @@ task :color_scheme => [ :welcome ] do
   %x[/usr/bin/defaults delete com.googlecode.iterm2 'New Bookmarks']
   schemes.each do |scheme|
     i = i + 1
-    name = File.basename(scheme, ".yml")
+    name = File.basename(scheme, ".yml").gsub('-', '')
     [ 'dark', 'light' ].each do |dl|
       content = File.read(File.join(ENV['HOME'], '.base16/output/iterm2-bookmarks/base16-' + name + '.' + dl + '.256.itermbookmark'))
       content.sub! '<?xml version="1.0" encoding="UTF-8"?>', ''
@@ -94,7 +94,7 @@ task :color_scheme => [ :welcome ] do
   %x[/usr/bin/defaults delete com.apple.Terminal 'Window Settings']
   schemes.each do |scheme|
     i = i + 1
-    name = File.basename(scheme, ".yml")
+    name = File.basename(scheme, ".yml").gsub('-', '')
     [ 'light', 'dark' ].each do |dl|
       content = File.read(File.join(ENV['HOME'], '.base16/output/terminal-app/base16-' + name + '.' + dl + '.256.terminal'))
       content.sub! '<?xml version="1.0" encoding="UTF-8"?>', ''
@@ -117,6 +117,7 @@ task :color_scheme => [ :welcome ] do
     %x[rm -Rf "$HOME/Library/Application Support/Avian/Bundles/Base16.tmbundle"]
     %x[mkdir -p "$HOME/Library/Application Support/Avian/Bundles/"]
     %x[cp -R $HOME/.qutie/textmate/Base16.tmbundle "$HOME/Library/Application Support/Avian/Bundles/"]
+    %x[mkdir -p "$HOME/Library/Application Support/Avian/Bundles/Base16.tmbundle/Themes"]
     %x[cp $HOME/.base16/output/textmate/*.tmTheme "$HOME/Library/Application Support/Avian/Bundles/Base16.tmBundle/Themes"]
     %x[rm -Rf ~/Library/Caches/com.macromates.TextMate]
     %x[rm -Rf ~/Library/Caches/com.macromates.TextMate.preview]
