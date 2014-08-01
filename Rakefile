@@ -22,7 +22,7 @@ task :color_scheme => [ :welcome ] do
   %x[cp -Rf $HOME/.qutie/base16/terminal-app $HOME/.base16/templates]
   %x[cd $HOME/.base16; ./base16]
   puts "--------------------------------------------------------------------------"
-  
+
   schemes = Dir.glob(File.join(ENV['HOME'], "/.base16/schemes/*.yml"))
   i = 0
   schemes.each do |scheme|
@@ -33,20 +33,20 @@ task :color_scheme => [ :welcome ] do
   puts "--------------------------------------------------------------------------"
 =begin
   selected_theme = -1
-  while selected_theme == -1 
+  while selected_theme == -1
     puts "Which theme would you like? "
     selected_theme = STDIN.gets.chomp.to_i
     if selected_theme > schemes.size or selected_theme < 1
       puts "\033[31mInvalid theme number\033[0m"
-      selected_theme = -1 
+      selected_theme = -1
     end
   end
   puts "--------------------------------------------------------------------------"
   selected_theme_name = File.basename(schemes[selected_theme - 1], ".yml")
   puts "Updating your applications to match the selected theme \033[33m#{selected_theme_name.capitalize}\033[0m"
   puts "--------------------------------------------------------------------------"
-=end  
-  
+=end
+
   puts "\033[34m===> \033[0mUpdating the color scheme for iTerm 2..."
   %x[/usr/bin/defaults delete com.googlecode.iterm2 'Custom Color Presets']
   schemes.each do |scheme|
@@ -89,7 +89,7 @@ task :color_scheme => [ :welcome ] do
       %x[/usr/bin/defaults write com.googlecode.iterm2 'New Bookmarks' -array-add '#{content}']
     end
   end
-  
+
   puts "\033[34m===> \033[0mUpdating the color scheme for Apple Terminal..."
   %x[/usr/bin/defaults delete com.apple.Terminal 'Window Settings']
   schemes.each do |scheme|
@@ -111,7 +111,7 @@ task :color_scheme => [ :welcome ] do
       %x[/usr/bin/defaults write com.apple.Terminal 'Window Settings' -dict-add 'Base16 #{scheme.capitalize} #{dl.capitalize}' '#{content}']
     end
   end
-  
+
   if File.exists?('/Applications/TextMate.app')
     puts "\033[34m===> \033[0mUpdating the color scheme for TextMate 2..."
     %x[rm -Rf "$HOME/Library/Application Support/Avian/Bundles/Base16.tmbundle"]
@@ -122,7 +122,7 @@ task :color_scheme => [ :welcome ] do
     %x[rm -Rf ~/Library/Caches/com.macromates.TextMate]
     %x[rm -Rf ~/Library/Caches/com.macromates.TextMate.preview]
   end
-  
+
   %x[killall cfprefsd]
 end
 
@@ -206,29 +206,10 @@ end
 
 task :install_nvm do
   puts "\033[34m===> \033[0mInstalling Node Version Manager (NVM)..."
-  
+
   unless File.exists?(File.join(ENV['HOME'], ".nvm"))
     %x[git clone https://github.com/creationix/nvm.git $HOME/.nvm]
   end
-end
-
-task :install_vundle do
-  puts "\033[34m===> \033[0mInstalling Vundle for VIM..."
-  
-  unless File.exists?(File.join(ENV['HOME'], ".vim", "bundle", "vundle"))
-    %x[mkdir -p $HOME/.vim/bundle/vundle]
-    %x[git clone https://github.com/gmarik/vundle.git $HOME/.vim/bundle/vundle]
-  end
-
-  puts "\033[34m===> \033[0mInstalling a custom .vimrc file..."
-  %x[cp -f $HOME/.qutie/vim/vimrc $HOME/.vimrc]
-
-  puts "\033[34m===> \033[0mSetting a list of default vundles..."
-  %x[cp -f $HOME/.qutie/vim/vundles.vim $HOME/.vim/vundles.vim]
-
-  puts "\033[34m===> \033[0mInstalling vundles (this may take a while)..."
-  %x[vim --noplugin -u $HOME/.vim/vundles.vim -N "+set hidden" "+syntax on" +BundleInstall +qall!]
-  
 end
 
 task :default => 'install'
@@ -257,14 +238,6 @@ task :install_fonts do
   %x[cp -f $HOME/.qutie/fonts/* $HOME/Library/Fonts]
 end
 
-task :install_chrome_custom_css do
-  puts "\033[34m===> \033[0mInstalling Google Chrome Developer Tools custom CSS..."
-  %x[cp -f $HOME/.qutie/chrome/base16-eighties.dark.css "$HOME/Library/Application\ Support/Google/Chrome/Default/User\ StyleSheets/Custom.css"]
-  
-  puts "\033[34m===> \033[0mDisabling Swipe controls for Google Chromes..."
-  %x[defaults write com.google.Chrome.plist AppleEnableSwipeNavigateWithScrolls -bool FALSE]
-end
-
 task :install_textmate_preferences do
   if File.exists?('/Applications/TextMate.app')
     puts "\033[34m===> \033[0mCustomizing preferences of TextMate 2..."
@@ -280,7 +253,7 @@ task :install_jenv do
 
   puts "\033[34m===> \033[0mInstalling Prezto jEnv module..."
   %x[cp -Rf $HOME/.qutie/zsh/modules/jenv $HOME/.zprezto/modules]
-  
+
   puts "\033[34m===> \033[0mAdding default JDK..."
   if File.exists?("/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home")
     %x[$HOME/.jenv/bin/jenv add /System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home]
@@ -300,16 +273,16 @@ task :install_prezto do
   %x[/bin/zsh -c 'setopt EXTENDED_GLOB; for rcfile in "${ZDOTDIR:-$HOME}"/.zprezto/runcoms/^README.md(.N); do ln -sf "$rcfile" "${ZDOTDIR:-$HOME}/.${rcfile:t}"; done']
   %x[rm -f $HOME/.zpreztorc]
   %x[cp -f $HOME/.qutie/zsh/zpreztorc $HOME/.zpreztorc]
-  
+
   %x[cp -Rf $HOME/.qutie/zsh/modules/base16 $HOME/.zprezto/modules]
-  
+
   if ENV["SHELL"].include? 'zsh' then
     puts "\033[31m===> \033[0mZsh is already configured as your shell of choice. Restart your session to load the new settings"
   else
     puts "\033[34m===> \033[0mSetting zsh as your default shell..."
     %x[chsh -s /bin/zsh]
   end
-  
+
   puts "\033[34m===> \033[0mInstalling Powerline prompt for ZSH..."
   %x[cp -f $HOME/.qutie/zsh/prompt-powerline $HOME/.zprezto/modules/prompt/functions/prompt_powerline_setup]
 end
